@@ -10,7 +10,7 @@ const SW_URL = `./sw.js`;
 const alarmStore = (state, emitter) => {
   state.registration = null
   emitter.on("sw:registered", registration => {
-    state.registration = registration;
+    state.registration = registration
     emitter.emit("render");
     emitter.emit('log:info', `ServiceWorker registration successful with scope: ${registration.scope}`);
   });
