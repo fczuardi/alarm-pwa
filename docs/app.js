@@ -2992,7 +2992,7 @@ var app = choo();
 app.use(alarmStore);
 app.use(registerWorker);
 app.route("/", mainView);
-app.route("/alarm-pwa/", mainView);
+app.route("/alarm-pwa", mainView);
 document.body.appendChild(html(_templateObject));
 app.mount("#main");
 },{"./checkFeatures":31,"./views":32,"choo":5,"choo/html":4}],31:[function(require,module,exports){
