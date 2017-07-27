@@ -1,13 +1,16 @@
-const { concurrent } = require("nps-utils")
+const { concurrent } = require("nps-utils");
 
 const vendors = ["choo", "choo/html", "choo-log"];
+
 const transforms = ["unflowify", "es2040"].map(t => "transform " + t);
+
 const appArgs = [
   "entry src/app.js",
   "outfile docs/app.js",
   "no-bundle-external",
   ...transforms
 ];
+
 const swArgs = [
   "entry src/sw.js",
   "outfile docs/sw.js",
@@ -17,7 +20,7 @@ const swArgs = [
 
 module.exports = {
   scripts: {
-    default: "budo --dir src src/app.js",
+    default: "budo --dir src src/app.js -- " + ["", ...transforms].join(" --"),
     bundle: {
       app: "browserify " + ["", ...appArgs].join(" --"),
       sw: "browserify " + ["", ...swArgs].join(" --"),
