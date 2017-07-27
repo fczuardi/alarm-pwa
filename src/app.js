@@ -1,7 +1,22 @@
 // @flow
 const SW_URL = `./sw.js`;
 
-const onLoad = () => {
+// Notification.requestPermission().then(function(permission) { ... });
+
+const canBeNotified = () => {
+  console.assert(
+    window.Notification,
+    `Your browser don't support notifications`
+  );
+  if (window.Notification === undefined) {
+    return false;
+  }
+  return window.Notification.permission === "granted";
+};
+
+console.log(canBeNotified());
+
+const registerWorker = url => {
   console.assert(
     navigator.serviceWorker !== undefined,
     `Browser don't support service worker`
@@ -9,7 +24,11 @@ const onLoad = () => {
   if (navigator.serviceWorker === undefined) {
     return false;
   }
-  navigator.serviceWorker.register(SW_URL).then(
+  return navigator.serviceWorker.register(url);
+};
+
+const onLoad = () => {
+  registerWorker(SW_URL).then(
     registration => {
       // Registration was successful
       console.log(
