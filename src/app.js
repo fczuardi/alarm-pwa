@@ -39,5 +39,6 @@ const app = choo();
 app.use(alarmStore);
 app.use(registerWorker);
 app.route("/", mainView);
+app.route("/alarm-pwa/", mainView);
 document.body.appendChild(html`<div id="main"></div>`);
 app.mount("#main");
