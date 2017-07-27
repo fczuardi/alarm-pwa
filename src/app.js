@@ -11,7 +11,7 @@ const canBeNotified = () => {
 
 const onLoad = () => {
   if (!browserIsCompatible()) {
-    throw new Error("imcompatible browser");
+    throw new Error("incompatible browser");
   }
   navigator.serviceWorker.register(SW_URL).then(
     registration => {
