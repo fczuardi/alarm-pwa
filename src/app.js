@@ -1,30 +1,43 @@
 // @flow
-const browserIsCompatible = require("./checkFeatures");
+const html = require("choo/html");
+const choo = require("choo");
 
+const browserIsCompatible = require("./checkFeatures");
+const { setupView, alarmView, blockedView, mainView } = require("./views");
 const SW_URL = `./sw.js`;
 
-// Notification.requestPermission().then(function(permission) { ... });
-
-const canBeNotified = () => {
-  return window.Notification.permission === "granted";
+const alarmStore = (state, emitter) => {
+  state.registration = null;
+  emitter.on("sw:registered", registration => {
+    state.registration = registration;
+    console.log(
+      "ServiceWorker registration successful with scope: ",
+      registration.scope
+    );
+    emitter.emit("render");
+  });
 };
 
-const onLoad = () => {
+const registerWorker = (state, emitter) => {
   if (!browserIsCompatible()) {
     throw new Error("incompatible browser");
   }
   navigator.serviceWorker.register(SW_URL).then(
     registration => {
       // Registration was successful
-      console.log(
-        "ServiceWorker registration successful with scope: ",
-        registration.scope
-      );
+      emitter.emit("sw:registered", registration);
     },
     err => {
       // registration failed :(
       console.log("ServiceWorker registration failed: ", err);
+      alert("ServiceWorker registration failed: ", err);
     }
   );
 };
-window.addEventListener("load", onLoad);
+
+const app = choo();
+app.use(alarmStore);
+app.use(registerWorker);
+app.route("/", mainView);
+document.body.appendChild(html`<div id="main"></div>`);
+app.mount("#main");
