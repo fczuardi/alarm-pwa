@@ -1,6 +1,7 @@
 // @flow
 const html = require("choo/html");
 const choo = require("choo");
+const log = require('choo-log')
 
 const browserIsCompatible = require("./checkFeatures");
 const { setupView, alarmView, blockedView, mainView } = require("./views");
@@ -10,11 +11,8 @@ const alarmStore = (state, emitter) => {
   state.registration = null;
   emitter.on("sw:registered", registration => {
     state.registration = registration;
-    console.log(
-      "ServiceWorker registration successful with scope: ",
-      registration.scope
-    );
     emitter.emit("render");
+    emitter.emit('log:info', `ServiceWorker registration successful with scope: ${registration.scope}`);
   });
 };
 
@@ -29,16 +27,17 @@ const registerWorker = (state, emitter) => {
     },
     err => {
       // registration failed :(
-      console.log("ServiceWorker registration failed: ", err);
-      alert("ServiceWorker registration failed: ", err);
+      emitter.emit('log:error', `ServiceWorker registration failed: ${err}`);
+      alert("ServiceWorker registration failed");
     }
   );
 };
 
 const app = choo();
+app.use(log());
 app.use(alarmStore);
 app.use(registerWorker);
 app.route("/", mainView);
-app.route("/alarm-pwa/", mainView);
+app.route("/alarm-pwa", mainView);
 document.body.appendChild(html`<div id="main"></div>`);
 app.mount("#main");
