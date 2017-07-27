@@ -3,7 +3,6 @@ const html = require("choo/html");
 const choo = require("choo");
 const log = require("choo-log");
 
-const browserIsCompatible = require("./checkFeatures");
 const { setupView, alarmView, blockedView, mainView } = require("./views");
 const SW_URL = `./sw.js`;
 
@@ -20,8 +19,11 @@ const alarmStore = (state, emitter) => {
 };
 
 const registerWorker = (state, emitter) => {
-  if (!browserIsCompatible()) {
-    throw new Error("incompatible browser");
+  if (!navigator.serviceWorker) {
+    return emitter.emit(
+      "log:error",
+      "You need a browser with service worker support"
+    );
   }
   navigator.serviceWorker.register(SW_URL).then(
     registration => {
@@ -42,5 +44,10 @@ app.use(alarmStore);
 app.use(registerWorker);
 app.route("/", mainView);
 app.route("/alarm-pwa", mainView);
-document.body.appendChild(html`<div id="main"></div>`);
 app.mount("#main");
+
+if (document.body) {
+  document.body.appendChild(html`<div id="main"></div>`);
+} else {
+  console.error("document.body is not here", document.body);
+}

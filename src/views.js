@@ -1,9 +1,11 @@
 // @flow
 const html = require("choo/html");
 
-const setupView = (state, emit) => {
+type ChooView = (Object, Function) => any;
+
+const setupView: ChooView = (state, emit) => {
   const notificationPrompt = () => {
-    return Notification.requestPermission().then(permission => {
+    return window.Notification.requestPermission().then(permission => {
       console.log({ permission });
       emit("render");
     });
@@ -19,7 +21,7 @@ const setupView = (state, emit) => {
 `;
 };
 
-const alarmView = (state, emit) => {
+const alarmView: ChooView = (state, emit) => {
   const requestAlarm = () => {
     window.setTimeout(
       state => {
@@ -39,27 +41,29 @@ const alarmView = (state, emit) => {
 `;
 };
 
-const blockedView = (state, emit) => {
+const blockedView: ChooView = (state, emit) => {
   return html`
         <div>
         Please change the notifications permissions and refresh this page.
         </div>
     `;
 };
-const mainView = (state, emit) => {
+const mainView: ChooView = (state, emit) => {
   if (state.registration === null) {
     return html`
         <div>
             Loading...
         </div>`;
   }
-  switch (Notification.permission) {
+  switch (window.Notification.permission) {
     case "granted":
       return alarmView(state, emit);
     case "denied":
-      return blockedView(state.emit);
-    default:
+      return blockedView(state, emit);
+    case "default":
       return setupView(state, emit);
+    default:
+      return html`<div>Error unexpected Notification.permission value</div>`;
   }
 };
 
