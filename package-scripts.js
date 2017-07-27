@@ -27,7 +27,6 @@ module.exports = {
         " --outfile docs/vendors.js",
       default: concurrent.nps("bundle.app", "bundle.sw", "bundle.vendors")
     },
-    fmt: "prettier --write",
-    precommit: "lint-staged"
+    fmt: "prettier --write"
   }
-};
+}
