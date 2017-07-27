@@ -8,8 +8,6 @@ var html = require("choo/html");
 var choo = require("choo");
 var log = require("choo-log");
 
-var browserIsCompatible = require("./checkFeatures");
-
 var _require = require("./views"),
     setupView = _require.setupView,
     alarmView = _require.alarmView,
@@ -28,8 +26,8 @@ var alarmStore = function (state, emitter) {
 };
 
 var registerWorker = function (state, emitter) {
-  if (!browserIsCompatible()) {
-    throw new Error("incompatible browser");
+  if (!navigator.serviceWorker) {
+    return emitter.emit("log:error", "You need a browser with service worker support");
   }
   navigator.serviceWorker.register(SW_URL).then(function (registration) {
     // Registration was successful
@@ -47,28 +45,19 @@ app.use(alarmStore);
 app.use(registerWorker);
 app.route("/", mainView);
 app.route("/alarm-pwa", mainView);
-document.body.appendChild(html(_templateObject));
 app.mount("#main");
-},{"./checkFeatures":2,"./views":3,"choo":undefined,"choo-log":undefined,"choo/html":undefined}],2:[function(require,module,exports){
-//      
-module.exports = function () {
-  console.assert(window.Notification, "Your browser don't support notifications");
-  if (window.Notification === undefined) {
-    return false;
-  }
 
-  console.assert(navigator.serviceWorker, "Your browser don't support service workers");
-  if (navigator.serviceWorker === undefined) {
-    return false;
-  }
-
-  return true;
-};
-},{}],3:[function(require,module,exports){
+if (document.body) {
+  document.body.appendChild(html(_templateObject));
+} else {
+  console.error("document.body is not here", document.body);
+}
+},{"./views":2,"choo":undefined,"choo-log":undefined,"choo/html":undefined}],2:[function(require,module,exports){
 var _templateObject = _taggedTemplateLiteral(["\n<div>\n    <h2>Setup</h2>\n    <p>Please allow notifications from this app.</p>\n    <button onclick=", " >\n        Continue\n    </button>\n</div>\n"], ["\n<div>\n    <h2>Setup</h2>\n    <p>Please allow notifications from this app.</p>\n    <button onclick=", " >\n        Continue\n    </button>\n</div>\n"]),
     _templateObject2 = _taggedTemplateLiteral(["\n<div>\n    <h2>Alarm</h2>\n    <button onclick=", ">\n        Wake me up in 3 seconds\n    </button>\n</div>\n"], ["\n<div>\n    <h2>Alarm</h2>\n    <button onclick=", ">\n        Wake me up in 3 seconds\n    </button>\n</div>\n"]),
     _templateObject3 = _taggedTemplateLiteral(["\n        <div>\n        Please change the notifications permissions and refresh this page.\n        </div>\n    "], ["\n        <div>\n        Please change the notifications permissions and refresh this page.\n        </div>\n    "]),
-    _templateObject4 = _taggedTemplateLiteral(["\n        <div>\n            Loading...\n        </div>"], ["\n        <div>\n            Loading...\n        </div>"]);
+    _templateObject4 = _taggedTemplateLiteral(["\n        <div>\n            Loading...\n        </div>"], ["\n        <div>\n            Loading...\n        </div>"]),
+    _templateObject5 = _taggedTemplateLiteral(["<div>Error unexpected Notification.permission value</div>"], ["<div>Error unexpected Notification.permission value</div>"]);
 
 function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
@@ -77,7 +66,7 @@ var html = require("choo/html");
 
 var setupView = function (state, emit) {
   var notificationPrompt = function () {
-    return Notification.requestPermission().then(function (permission) {
+    return window.Notification.requestPermission().then(function (permission) {
       console.log({ permission: permission });
       emit("render");
     });
@@ -101,13 +90,15 @@ var mainView = function (state, emit) {
   if (state.registration === null) {
     return html(_templateObject4);
   }
-  switch (Notification.permission) {
+  switch (window.Notification.permission) {
     case "granted":
       return alarmView(state, emit);
     case "denied":
-      return blockedView(state.emit);
-    default:
+      return blockedView(state, emit);
+    case "default":
       return setupView(state, emit);
+    default:
+      return html(_templateObject5);
   }
 };
 
