@@ -1,25 +1,9 @@
 // @flow
+const browserIsCompatible = require("./checkFeatures");
+
 const SW_URL = `./sw.js`;
 
 // Notification.requestPermission().then(function(permission) { ... });
-
-const browserIsCompatible = () => {
-  console.assert(
-    window.Notification,
-    `Your browser don't support notifications`
-  );
-  if (window.Notification === undefined) {
-    return false;
-  }
-  console.assert(
-    navigator.serviceWorker,
-    `Your browser don't support service workers`
-  );
-  if (navigator.serviceWorker === undefined) {
-    return false;
-  }
-  return true;
-};
 
 const canBeNotified = () => {
   return window.Notification.permission === "granted";
