@@ -5,10 +5,13 @@
   "main": "index.js",
   "scripts": {
     "start": "budo --dir src src/app.js",
-    "bundle:app": "browserify --entry src/app.js --transform unflowify --transform es2040 --outfile docs/app.js",
-    "bundle:sw": "browserify --entry src/sw.js --transform unflowify --transform es2040 --outfile docs/sw.js",
+    "bundle:app": "browserify --entry src/app.js --outfile docs/app.js",
+    "bundle:sw": "browserify --entry src/sw.js --outfile docs/sw.js",
     "bundle": "npm run bundle:app && npm run bundle:sw",
     "precommit": "lint-staged"
+  },
+  "browserify": {
+    "transform": ["unflowify", "es2040"]
   },
   "lint-staged": {
     "src/*.js": [
