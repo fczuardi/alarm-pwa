@@ -4,11 +4,12 @@
   "description": "A proof of concept of a webapp alarm using push notifications.",
   "main": "index.js",
   "scripts": {
-    "start": "nps"
+    "start": "nps",
+    "precommit": "lint-staged"
   },
   "lint-staged": {
     "src/*.js": [
-      "start fmt",
+      "prettier --write",
       "git add"
     ]
   },
