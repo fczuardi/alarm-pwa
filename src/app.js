@@ -1,6 +1,6 @@
 // @flow
-const html = require("choo/html");
 const choo = require("choo");
+const html = require("choo/html");
 const log = require("choo-log");
 
 const { setupView, alarmView, blockedView, mainView } = require("./views");

@@ -4,8 +4,8 @@ var _templateObject = _taggedTemplateLiteral(["<div id=\"main\"></div>"], ["<div
 function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 //      
-var html = require("choo/html");
 var choo = require("choo");
+var html = require("choo/html");
 var log = require("choo-log");
 
 var _require = require("./views"),
