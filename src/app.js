@@ -8,7 +8,7 @@ const { setupView, alarmView, blockedView, mainView } = require("./views");
 const SW_URL = `./sw.js`;
 
 const alarmStore = (state, emitter) => {
-  state.registration = null
+  state.registration = null;
   emitter.on("sw:registered", registration => {
     state.registration = registration;
     emitter.emit("render");
