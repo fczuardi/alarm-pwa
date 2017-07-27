@@ -1,18 +1,21 @@
 // @flow
 const html = require("choo/html");
 const choo = require("choo");
-const log = require('choo-log')
+const log = require("choo-log");
 
 const browserIsCompatible = require("./checkFeatures");
 const { setupView, alarmView, blockedView, mainView } = require("./views");
 const SW_URL = `./sw.js`;
 
 const alarmStore = (state, emitter) => {
-  state.registration = null
+  state.registration = null;
   emitter.on("sw:registered", registration => {
-    state.registration = registration
+    state.registration = registration;
     emitter.emit("render");
-    emitter.emit('log:info', `ServiceWorker registration successful with scope: ${registration.scope}`);
+    emitter.emit(
+      "log:info",
+      `ServiceWorker registration successful with scope: ${registration.scope}`
+    );
   });
 };
 
@@ -27,7 +30,7 @@ const registerWorker = (state, emitter) => {
     },
     err => {
       // registration failed :(
-      emitter.emit('log:error', `ServiceWorker registration failed: ${err}`);
+      emitter.emit("log:error", `ServiceWorker registration failed: ${err}`);
       alert("ServiceWorker registration failed");
     }
   );
