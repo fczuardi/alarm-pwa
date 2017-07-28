@@ -33,6 +33,7 @@
   "devDependencies": {
     "browserify": "^14.4.0",
     "budo": "^10.0.4",
+    "cpy-cli": "^1.0.1",
     "es2040": "^1.2.6",
     "flow-bin": "^0.51.0",
     "flow-typed": "^2.1.5",
