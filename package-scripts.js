@@ -27,7 +27,7 @@ module.exports = {
     default: {
       description: "Starts the development local web server.",
       script:
-        "budo --dir src --dir assets src/app.js -- " +
+        "budo --dir src --dir assets --force-default-index src/app.js -- " +
         ["", ...transforms].join(" --")
     },
     bundle: {
@@ -48,6 +48,12 @@ module.exports = {
           ["", ...vendors].join(" -r ") +
           " --outfile docs/vendors.js"
       },
+      html: {
+        description:
+          "Copy HTML index file template replacing config variables in config.toml",
+        script:
+          "variable-replacer src/index.html docs " + manifestArgs.join(" ")
+      },
       manifest: {
         description:
           "Copy manifest file template replacing config variables in config.toml",
@@ -64,6 +70,7 @@ module.exports = {
           "bundle.app",
           "bundle.sw",
           "bundle.vendors",
+          "bundle.html",
           "bundle.manifest",
           "bundle.assets"
         )
