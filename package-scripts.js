@@ -20,16 +20,33 @@ const swArgs = [
 
 module.exports = {
   scripts: {
-    default: "budo --dir src src/app.js -- " + ["", ...transforms].join(" --"),
-    bundle: {
-      app: "browserify " + ["", ...appArgs].join(" --"),
-      sw: "browserify " + ["", ...swArgs].join(" --"),
-      vendors:
-        "browserify " +
-        ["", ...vendors].join(" -r ") +
-        " --outfile docs/vendors.js",
-      default: concurrent.nps("bundle.app", "bundle.sw", "bundle.vendors")
+    default: {
+        description: "Starts the development local web server.",
+        script: "budo --dir src src/app.js -- " + ["", ...transforms].join(" --")
     },
-    fmt: "prettier --write"
+    bundle: {
+      app: {
+          description: "Build the application bundle without the external libraries (app.js)",
+          script: "browserify " + ["", ...appArgs].join(" --")
+      },
+      sw: {
+          description: "Build the service workers file (sw.js)",
+          script: "browserify " + ["", ...swArgs].join(" --")
+      },
+      vendors: {
+          description: "Build the bundle with 3rd party dependencies (vendors.js).",
+            script: "browserify " +
+        ["", ...vendors].join(" -r ") +
+        " --outfile docs/vendors.js"
+      },
+      default: {
+          description: "Build all production bundles.",
+          script: concurrent.nps("bundle.app", "bundle.sw", "bundle.vendors")
+      }
+    },
+    fmt: {
+        description: "Format/lint a source file, usage: npm start fmt -- yourfile.js",
+        script: "prettier --write"
+    }
   }
 };

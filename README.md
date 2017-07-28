@@ -26,6 +26,20 @@ lt --port 9966
 
 If you are testing locally https is not a requirement for service works and using ```http://localhost:9966``` should be fine.
 
+### 3. Production Bundle
+To generate a static page with the bundled dependencies under the ```docs``` subfolder (served by github pages) use:
+
+```
+npm start bundle
+```
+
+### 4. Other tasks
+
+To get a list of all available build tasks type:
+
+```
+npm start help
+```
 
 [budo]: https://github.com/mattdesl/budo
 [localtunnel]: https://localtunnel.me
