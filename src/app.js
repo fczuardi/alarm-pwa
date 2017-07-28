@@ -43,7 +43,9 @@ app.use(log());
 app.use(alarmStore);
 app.use(registerWorker);
 app.route("/", mainView);
+app.route("/index.html", mainView);
 app.route("/alarm-pwa", mainView);
+app.route("/alarm-pwa/index.html", mainView);
 app.mount("#main");
 
 if (document.body) {
