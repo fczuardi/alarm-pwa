@@ -21,32 +21,36 @@ const swArgs = [
 module.exports = {
   scripts: {
     default: {
-        description: "Starts the development local web server.",
-        script: "budo --dir src src/app.js -- " + ["", ...transforms].join(" --")
+      description: "Starts the development local web server.",
+      script: "budo --dir src src/app.js -- " + ["", ...transforms].join(" --")
     },
     bundle: {
       app: {
-          description: "Build the application bundle without the external libraries (app.js)",
-          script: "browserify " + ["", ...appArgs].join(" --")
+        description:
+          "Build the application bundle without the external libraries (app.js)",
+        script: "browserify " + ["", ...appArgs].join(" --")
       },
       sw: {
-          description: "Build the service workers file (sw.js)",
-          script: "browserify " + ["", ...swArgs].join(" --")
+        description: "Build the service workers file (sw.js)",
+        script: "browserify " + ["", ...swArgs].join(" --")
       },
       vendors: {
-          description: "Build the bundle with 3rd party dependencies (vendors.js).",
-            script: "browserify " +
-        ["", ...vendors].join(" -r ") +
-        " --outfile docs/vendors.js"
+        description:
+          "Build the bundle with 3rd party dependencies (vendors.js).",
+        script:
+          "browserify " +
+          ["", ...vendors].join(" -r ") +
+          " --outfile docs/vendors.js"
       },
       default: {
-          description: "Build all production bundles.",
-          script: concurrent.nps("bundle.app", "bundle.sw", "bundle.vendors")
+        description: "Build all production bundles.",
+        script: concurrent.nps("bundle.app", "bundle.sw", "bundle.vendors")
       }
     },
     fmt: {
-        description: "Format/lint a source file, usage: npm start fmt -- yourfile.js",
-        script: "prettier --write"
+      description:
+        'Format/lint a source file, usage: npm start "fmt yourfile.js"',
+      script: "prettier --write"
     }
   }
 };
