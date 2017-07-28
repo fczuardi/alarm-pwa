@@ -26,7 +26,9 @@ module.exports = {
   scripts: {
     default: {
       description: "Starts the development local web server.",
-      script: "budo --dir src src/app.js -- " + ["", ...transforms].join(" --")
+      script:
+        "budo --dir src --dir assets src/app.js -- " +
+        ["", ...transforms].join(" --")
     },
     bundle: {
       app: {
@@ -52,13 +54,18 @@ module.exports = {
         script:
           "variable-replacer src/manifest.json docs " + manifestArgs.join(" ")
       },
+      assets: {
+        description: "Copy application icons",
+        script: copy("--no-overwrite --parents --cwd assets **/*.png ../docs")
+      },
       default: {
         description: "Build all production bundles.",
         script: concurrent.nps(
           "bundle.app",
           "bundle.sw",
           "bundle.vendors",
-          "bundle.manifest"
+          "bundle.manifest",
+          "bundle.assets"
         )
       }
     },
