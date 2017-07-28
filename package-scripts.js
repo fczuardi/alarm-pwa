@@ -1,4 +1,6 @@
-const { concurrent } = require("nps-utils");
+require("toml-require").install();
+const { concurrent, copy } = require("nps-utils");
+const config = require("./config.toml");
 
 const vendors = ["choo", "choo/html", "choo-log"];
 
@@ -17,6 +19,8 @@ const swArgs = [
   "no-bundle-external",
   ...transforms
 ];
+
+const manifestArgs = Object.keys(config).map(k => `--data-${k}="${config[k]}"`);
 
 module.exports = {
   scripts: {
@@ -42,9 +46,20 @@ module.exports = {
           ["", ...vendors].join(" -r ") +
           " --outfile docs/vendors.js"
       },
+      manifest: {
+        description:
+          "Copy manifest file template replacing config variables in config.toml",
+        script:
+          "variable-replacer src/manifest.json docs " + manifestArgs.join(" ")
+      },
       default: {
         description: "Build all production bundles.",
-        script: concurrent.nps("bundle.app", "bundle.sw", "bundle.vendors")
+        script: concurrent.nps(
+          "bundle.app",
+          "bundle.sw",
+          "bundle.vendors",
+          "bundle.manifest"
+        )
       }
     },
     fmt: {
