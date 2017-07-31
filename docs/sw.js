@@ -9,37 +9,37 @@ var urlsToCache = [
 "index.html", "vendors.js", "app.js", "sw.js"];
 
 var onInstall = function (event) {
-  console.log({ event: event });
-  console.log(CACHE_NAME);
-  event.waitUntil(caches.open(CACHE_NAME).then(function (cache) {
-    console.log("Opened cache");
-    return cache.addAll(urlsToCache).then(function (c) {
-      return console.log({ c: c });
-    });
-  }).catch(function (e) {
-    return console.error({ e: e });
-  }));
+    console.log({ event: event });
+    console.log(CACHE_NAME);
+    event.waitUntil(caches.open(CACHE_NAME).then(function (cache) {
+        console.log("Opened cache");
+        return cache.addAll(urlsToCache).then(function (c) {
+            return console.log({ c: c });
+        });
+    }).catch(function (e) {
+        return console.error({ e: e });
+    }));
 };
 
 var onFetch = function (event) {
-  console.log({ event: event });
-  console.log(event.request.url);
-  event.respondWith(caches.match(event.request).then(function (response) {
-    if (response) {
-      return response;
-    }
-    return fetch(event.request);
-  }));
+    console.log({ event: event });
+    console.log(event.request.url);
+    event.respondWith(caches.match(event.request).then(function (response) {
+        if (response) {
+            return response;
+        }
+        return fetch(event.request);
+    }));
 };
 
 var onActivate = function (event) {
-  console.log({ event: event });
-  //remove previous caches
-  caches.keys().then(function (names) {
-    return Promise.all(names.map(function (name) {
-      return name !== CACHE_NAME ? caches.delete(name) : Promise.resolve();
-    }));
-  });
+    console.log({ event: event });
+    //remove previous caches
+    caches.keys().then(function (names) {
+        return Promise.all(names.map(function (name) {
+            return name !== CACHE_NAME ? caches.delete(name) : Promise.resolve();
+        }));
+    });
 };
 self.addEventListener("install", onInstall);
 self.addEventListener("fetch", onFetch);

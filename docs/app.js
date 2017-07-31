@@ -23,26 +23,26 @@ var SW_URL = "./sw.js";
 // const audio = new Audio(config.alarmSound);
 
 var alarmStore = function (state, emitter) {
-  state.registration = null;
-  emitter.on("sw:registered", function (registration) {
-    state.registration = registration;
-    emitter.emit("render");
-    emitter.emit("log:info", "ServiceWorker registration successful with scope: " + registration.scope);
-  });
+    state.registration = null;
+    emitter.on("sw:registered", function (registration) {
+        state.registration = registration;
+        emitter.emit("render");
+        emitter.emit("log:info", "ServiceWorker registration successful with scope: " + registration.scope);
+    });
 };
 
 var registerWorker = function (state, emitter) {
-  if (!navigator.serviceWorker) {
-    return emitter.emit("log:error", "You need a browser with service worker support");
-  }
-  navigator.serviceWorker.register(SW_URL).then(function (registration) {
-    // Registration was successful
-    emitter.emit("sw:registered", registration);
-  }, function (err) {
-    // registration failed :(
-    emitter.emit("log:error", "ServiceWorker registration failed: " + err);
-    alert("ServiceWorker registration failed");
-  });
+    if (!navigator.serviceWorker) {
+        return emitter.emit("log:error", "You need a browser with service worker support");
+    }
+    navigator.serviceWorker.register(SW_URL).then(function (registration) {
+        // Registration was successful
+        emitter.emit("sw:registered", registration);
+    }, function (err) {
+        // registration failed :(
+        emitter.emit("log:error", "ServiceWorker registration failed: " + err);
+        alert("ServiceWorker registration failed");
+    });
 };
 
 var app = choo();
@@ -56,9 +56,9 @@ app.route("/alarm-pwa/index.html", mainView);
 app.mount("#main");
 
 if (document.body) {
-  document.body.appendChild(html(_templateObject));
+    document.body.appendChild(html(_templateObject));
 } else {
-  console.error("document.body is not here", document.body);
+    console.error("document.body is not here", document.body);
 }
 },{"../config.toml":1,"./views":3,"choo":undefined,"choo-log":undefined,"choo/html":undefined}],3:[function(require,module,exports){
 var _templateObject = _taggedTemplateLiteral(["\n<div>\n    <h2>Setup</h2>\n    <p>Please allow notifications from this app.</p>\n    <button onclick=", " >\n        Continue\n    </button>\n</div>\n"], ["\n<div>\n    <h2>Setup</h2>\n    <p>Please allow notifications from this app.</p>\n    <button onclick=", " >\n        Continue\n    </button>\n</div>\n"]),
@@ -74,55 +74,55 @@ var config = require("../config.toml");
 var html = require("choo/html");
 
 var setupView = function (state, emit) {
-  var notificationPrompt = function () {
-    return window.Notification.requestPermission().then(function (permission) {
-      console.log({ permission: permission });
-      emit("render");
-    });
-  };
-  return html(_templateObject, notificationPrompt);
+    var notificationPrompt = function () {
+        return window.Notification.requestPermission().then(function (permission) {
+            console.log({ permission: permission });
+            emit("render");
+        });
+    };
+    return html(_templateObject, notificationPrompt);
 };
 
 var alarmView = function (state, emit) {
-  var requestAlarm = function () {
-    window.setTimeout(function (state) {
-      // const audio = new Audio(config.alarmSound);
-      // audio.play();
-      state.registration.showNotification("Hi there", {
-        // sound: config.alarmSound, // not implemented in any browsers yet
-        requireInteraction: true,
-        body: "Can you answer?",
-        vibrate: [200, 100, 200, 100, 200, 100, 500],
-        actions: [{ action: "yes", title: "Yes" }, { action: "no", title: "No" }]
-      });
-    }, 3000, state);
-  };
-  return html(_templateObject2, requestAlarm);
+    var requestAlarm = function () {
+        window.setTimeout(function (state) {
+            // const audio = new Audio(config.alarmSound);
+            // audio.play();
+            state.registration.showNotification("Hi there", {
+                // sound: config.alarmSound, // not implemented in any browsers yet
+                requireInteraction: true,
+                body: "Can you answer?",
+                vibrate: [200, 100, 200, 100, 200, 100, 500],
+                actions: [{ action: "yes", title: "Yes" }, { action: "no", title: "No" }]
+            });
+        }, 3000, state);
+    };
+    return html(_templateObject2, requestAlarm);
 };
 
 var blockedView = function (state, emit) {
-  return html(_templateObject3);
+    return html(_templateObject3);
 };
 var mainView = function (state, emit) {
-  if (state.registration === null) {
-    return html(_templateObject4);
-  }
-  switch (window.Notification.permission) {
-    case "granted":
-      return alarmView(state, emit);
-    case "denied":
-      return blockedView(state, emit);
-    case "default":
-      return setupView(state, emit);
-    default:
-      return html(_templateObject5);
-  }
+    if (state.registration === null) {
+        return html(_templateObject4);
+    }
+    switch (window.Notification.permission) {
+        case "granted":
+            return alarmView(state, emit);
+        case "denied":
+            return blockedView(state, emit);
+        case "default":
+            return setupView(state, emit);
+        default:
+            return html(_templateObject5);
+    }
 };
 
 module.exports = {
-  setupView: setupView,
-  alarmView: alarmView,
-  blockedView: blockedView,
-  mainView: mainView
+    setupView: setupView,
+    alarmView: alarmView,
+    blockedView: blockedView,
+    mainView: mainView
 };
 },{"../config.toml":1,"choo/html":undefined}]},{},[2]);
