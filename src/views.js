@@ -29,10 +29,14 @@ const alarmView: ChooView = (state, emit) => {
         // const audio = new Audio(config.alarmSound);
         // audio.play();
         state.registration.showNotification("Hi there", {
-          // requireInteraction: true,
+          // sound: config.alarmSound, // not implemented in any browsers yet
+          requireInteraction: true,
           body: "Can you answer?",
           vibrate: [200, 100, 200, 100, 200, 100, 500],
-          sound: config.alarmSound
+          actions: [
+            { action: "yes", title: "Yes" },
+            { action: "no", title: "No" }
+          ]
         });
       },
       3000,

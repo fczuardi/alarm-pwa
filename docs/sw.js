@@ -1,12 +1,12 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = { "name": "Your App's Long Name", "shortName": "Your App's Name", "themeColor": "#FFFFFF", "alarmSound": "audio/ringer_firefox.opus" };
-},{}],2:[function(require,module,exports){
 //      
-var config = require("../config.toml");
+// const config = require("../config.toml");
 
-var CACHE_NAME = "v3";
+var CACHE_NAME = "v4";
 
-var urlsToCache = ["index.html", "vendors.js", "app.js", "sw.js", config.alarmSound];
+var urlsToCache = [
+// config.alarmSound,
+"index.html", "vendors.js", "app.js", "sw.js"];
 
 var onInstall = function (event) {
   console.log({ event: event });
@@ -44,4 +44,4 @@ var onActivate = function (event) {
 self.addEventListener("install", onInstall);
 self.addEventListener("fetch", onFetch);
 self.addEventListener("activate", onActivate);
-},{"../config.toml":1}]},{},[2]);
+},{}]},{},[1]);

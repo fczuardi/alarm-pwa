@@ -1,14 +1,14 @@
 // @flow
-const config = require("../config.toml");
+// const config = require("../config.toml");
 
-const CACHE_NAME = "v3";
+const CACHE_NAME = "v4";
 
 const urlsToCache = [
+  // config.alarmSound,
   "index.html",
   "vendors.js",
   "app.js",
-  "sw.js",
-  config.alarmSound
+  "sw.js"
 ];
 
 const onInstall = event => {

@@ -8,7 +8,7 @@ const { setupView, alarmView, blockedView, mainView } = require("./views");
 const SW_URL = `./sw.js`;
 
 // load ringtone audio file
-const audio = new Audio(config.alarmSound);
+// const audio = new Audio(config.alarmSound);
 
 const alarmStore = (state, emitter) => {
   state.registration = null;
