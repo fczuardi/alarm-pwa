@@ -1,0 +1,2 @@
+ - [ ] react to a notification by playing a sound
+ - [ ] send notification to a client from another machine
