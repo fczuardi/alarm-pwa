@@ -1,10 +1,10 @@
 require("toml-require").install();
-const { concurrent, copy } = require("nps-utils");
 const config = require("./config.toml");
+const { concurrent, copy } = require("nps-utils");
 
 const vendors = ["choo", "choo/html", "choo-log"];
 
-const transforms = ["unflowify", "es2040"].map(t => "transform " + t);
+const transforms = [ "unflowify","tomlify", "es2040"].map(t => "transform " + t);
 
 const appArgs = [
   "entry src/app.js",
@@ -62,7 +62,7 @@ module.exports = {
       },
       assets: {
         description: "Copy application icons",
-        script: copy("--no-overwrite --parents --cwd assets **/*.png ../docs")
+        script: copy("--no-overwrite --parents --cwd assets **/*.{png,opus} ../docs")
       },
       default: {
         description: "Build all production bundles.",

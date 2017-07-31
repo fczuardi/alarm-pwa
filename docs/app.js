@@ -1,9 +1,12 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+module.exports = { "name": "Your App's Long Name", "shortName": "Your App's Name", "themeColor": "#FFFFFF", "alarmSound": "audio/ringer_firefox.opus" };
+},{}],2:[function(require,module,exports){
 var _templateObject = _taggedTemplateLiteral(["<div id=\"main\"></div>"], ["<div id=\"main\"></div>"]);
 
 function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 //      
+var config = require("../config.toml");
 var choo = require("choo");
 var html = require("choo/html");
 var log = require("choo-log");
@@ -15,6 +18,9 @@ var _require = require("./views"),
     mainView = _require.mainView;
 
 var SW_URL = "./sw.js";
+
+// load ringtone audio file
+var audio = new Audio(config.alarmSound);
 
 var alarmStore = function (state, emitter) {
   state.registration = null;
@@ -54,7 +60,7 @@ if (document.body) {
 } else {
   console.error("document.body is not here", document.body);
 }
-},{"./views":2,"choo":undefined,"choo-log":undefined,"choo/html":undefined}],2:[function(require,module,exports){
+},{"../config.toml":1,"./views":3,"choo":undefined,"choo-log":undefined,"choo/html":undefined}],3:[function(require,module,exports){
 var _templateObject = _taggedTemplateLiteral(["\n<div>\n    <h2>Setup</h2>\n    <p>Please allow notifications from this app.</p>\n    <button onclick=", " >\n        Continue\n    </button>\n</div>\n"], ["\n<div>\n    <h2>Setup</h2>\n    <p>Please allow notifications from this app.</p>\n    <button onclick=", " >\n        Continue\n    </button>\n</div>\n"]),
     _templateObject2 = _taggedTemplateLiteral(["\n<div>\n    <h2>Alarm</h2>\n    <button onclick=", ">\n        Wake me up in 3 seconds\n    </button>\n</div>\n"], ["\n<div>\n    <h2>Alarm</h2>\n    <button onclick=", ">\n        Wake me up in 3 seconds\n    </button>\n</div>\n"]),
     _templateObject3 = _taggedTemplateLiteral(["\n        <div>\n        Please change the notifications permissions and refresh this page.\n        </div>\n    "], ["\n        <div>\n        Please change the notifications permissions and refresh this page.\n        </div>\n    "]),
@@ -64,6 +70,7 @@ var _templateObject = _taggedTemplateLiteral(["\n<div>\n    <h2>Setup</h2>\n    
 function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 //      
+var config = require("../config.toml");
 var html = require("choo/html");
 
 var setupView = function (state, emit) {
@@ -79,7 +86,14 @@ var setupView = function (state, emit) {
 var alarmView = function (state, emit) {
   var requestAlarm = function () {
     window.setTimeout(function (state) {
-      state.registration.showNotification("Hi there", {});
+      // const audio = new Audio(config.alarmSound);
+      // audio.play();
+      state.registration.showNotification("Hi there", {
+        // requireInteraction: true,
+        body: 'Can you answer?',
+        vibrate: [200, 100, 200, 100, 200, 100, 500],
+        sound: config.alarmSound
+      });
     }, 3000, state);
   };
   return html(_templateObject2, requestAlarm);
@@ -110,4 +124,4 @@ module.exports = {
   blockedView: blockedView,
   mainView: mainView
 };
-},{"choo/html":undefined}]},{},[1]);
+},{"../config.toml":1,"choo/html":undefined}]},{},[2]);

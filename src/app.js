@@ -1,10 +1,14 @@
 // @flow
+const config = require("../config.toml");
 const choo = require("choo");
 const html = require("choo/html");
 const log = require("choo-log");
 
 const { setupView, alarmView, blockedView, mainView } = require("./views");
 const SW_URL = `./sw.js`;
+
+// load ringtone audio file
+const audio = new Audio(config.alarmSound);
 
 const alarmStore = (state, emitter) => {
   state.registration = null;
