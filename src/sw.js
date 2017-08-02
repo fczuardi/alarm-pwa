@@ -1,5 +1,5 @@
 // @flow
-const CACHE_NAME = "v5";
+const CACHE_NAME = "v6";
 
 const urlsToCache = ["index.html", "vendors.js", "app.js", "sw.js"];
 
@@ -57,6 +57,22 @@ self.addEventListener("notificationclose", event => {
 self.addEventListener("notificationclick", event => {
     console.log("notificationclick", event);
 });
+
 self.addEventListener("push", event => {
     console.log("push", event);
+    var options = {
+        body: "This notification was generated from a push!",
+        vibrate: [100, 50, 100],
+        data: {
+            dateOfArrival: Date.now(),
+            primaryKey: "2"
+        },
+        actions: [
+            { action: "explore", title: "Explore this new world" },
+            { action: "close", title: "Close" }
+        ]
+    };
+    event.waitUntil(
+        self.registration.showNotification("Hello world!", options)
+    );
 });

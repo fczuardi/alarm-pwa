@@ -7,18 +7,20 @@ const log = require("choo-log");
 const { setupView, alarmView, blockedView, mainView } = require("./views");
 const SW_URL = `./sw.js`;
 
-// load ringtone audio file
-// const audio = new Audio(config.alarmSound);
-
 const alarmStore = (state, emitter) => {
+    state.notificationPermission = window.Notification.permission;
     state.registration = null;
     emitter.on("sw:registered", registration => {
         state.registration = registration;
         emitter.emit("render");
-        emitter.emit(
-            "log:info",
-            `ServiceWorker registration successful with scope: ${registration.scope}`
-        );
+    });
+    emitter.on("notification:update", permission => {
+        state.notificationPermission = permission;
+        emitter.emit("render");
+    });
+    emitter.on("subscription:available", subscription => {
+        state.subscription = subscription;
+        emitter.emit("render");
     });
 };
 
@@ -31,11 +33,13 @@ const registerWorker = (state, emitter) => {
     }
     navigator.serviceWorker.register(SW_URL).then(
         registration => {
-            // Registration was successful
+            emitter.emit(
+                "log:info",
+                `ServiceWorker registration successful with scope: ${registration.scope}`
+            );
             emitter.emit("sw:registered", registration);
         },
         err => {
-            // registration failed :(
             emitter.emit(
                 "log:error",
                 `ServiceWorker registration failed: ${err}`

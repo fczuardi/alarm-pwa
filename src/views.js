@@ -6,8 +6,10 @@ type ChooView = (Object, Function) => any;
 const setupView: ChooView = (state, emit) => {
     const notificationPrompt = () => {
         return window.Notification.requestPermission().then(permission => {
-            console.log({ permission });
-            emit("render");
+            emit(
+                "notification:update",
+                permission === "granted" ? permission : "denied"
+            );
         });
     };
     return html`
@@ -22,29 +24,43 @@ const setupView: ChooView = (state, emit) => {
 };
 
 const alarmView: ChooView = (state, emit) => {
-    const requestAlarm = () => {
-        window.setTimeout(
-            state => {
-                state.registration.showNotification("Hi there", {
-                    requireInteraction: true,
-                    body: "Can you answer?",
-                    vibrate: [200, 100, 200, 100, 200, 100, 500],
-                    actions: [
-                        { action: "yes", title: "Yes" },
-                        { action: "no", title: "No" }
-                    ]
-                });
-            },
-            3000,
-            state
-        );
-    };
+    let curlLine = "";
+    if (!state.subscription) {
+        state.registration.pushManager
+            .getSubscription()
+            .then(subscription => {
+                console.log({ subscription });
+                if (subscription) {
+                    return subscription;
+                }
+                if (!state.registration.pushManager) {
+                    emit("log:error", "pushManager not there");
+                    return Promise.reject();
+                }
+                const subscriptionPromise = state.registration.pushManager.subscribe(
+                    { userVisibleOnly: true }
+                );
+                console.log({ subscriptionPromise });
+                return subscriptionPromise;
+            })
+            .then(subscription => {
+                emit(
+                    "log:info",
+                    `Got a susbscription ${JSON.stringify(subscription)}`
+                );
+                emit("subscription:available", subscription);
+            })
+            .catch(err => emit("log:error", err.message));
+    } else {
+        console.log(state.subscription.endpoint);
+        curlLine = `curl "${state.subscription
+            .endpoint}" --request POST --header "TTL: 60" --header "Content-Length: 0"`;
+    }
     return html`
 <div>
     <h2>Alarm</h2>
-    <button onclick=${requestAlarm}>
-        Wake me up in 3 seconds
-    </button>
+    <p>Use the following curl line to sound the alarm</p>
+    <pre>${curlLine}</pre>
 </div>
 `;
 };
@@ -63,7 +79,7 @@ const mainView: ChooView = (state, emit) => {
             Loading...
         </div>`;
     }
-    switch (window.Notification.permission) {
+    switch (state.notificationPermission) {
         case "granted":
             return alarmView(state, emit);
         case "denied":
