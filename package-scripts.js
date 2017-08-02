@@ -22,7 +22,7 @@ const swArgs = [
     ...transforms
 ];
 
-const manifestArgs = Object.keys(config).map(k => `--data-${k}="${config[k]}"`);
+const manifestArgs = Object.keys(config.app).map(k => `--data-${k}="${config.app[k]}"`);
 
 module.exports = {
     scripts: {
@@ -54,7 +54,7 @@ module.exports = {
                 description:
                     "Copy HTML index file template replacing config variables in config.toml",
                 script:
-                    "variable-replacer src/index.html docs " +
+                    "variable-replacer index.html docs " +
                     manifestArgs.join(" ")
             },
             manifest: {
