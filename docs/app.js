@@ -113,7 +113,7 @@ var alarmView = function (state, emit) {
         });
     } else {
         console.log(state.subscription.endpoint);
-        curlLine = "curl \"" + state.subscription.endpoint + "\" --request POST --header \"TTL: 60\" --header \"Content-Length: 0\" --header \"Authorization: key=" + config.app.gcmServerKey + "\"";
+        curlLine = "\ncurl \"" + state.subscription.endpoint + "\"   --request POST --header \"TTL: 60\" --header \"Content-Length: 0\"   --header \"Authorization: key=" + config.app.gcmServerKey + "\"\n";
     }
     return html(_templateObject2, curlLine);
 };
