@@ -1,5 +1,4 @@
 // @flow
-const config = require("../config.toml");
 const html = require("choo/html");
 
 type ChooView = (Object, Function) => any;
@@ -26,10 +25,7 @@ const alarmView: ChooView = (state, emit) => {
     const requestAlarm = () => {
         window.setTimeout(
             state => {
-                // const audio = new Audio(config.alarmSound);
-                // audio.play();
                 state.registration.showNotification("Hi there", {
-                    // sound: config.alarmSound, // not implemented in any browsers yet
                     requireInteraction: true,
                     body: "Can you answer?",
                     vibrate: [200, 100, 200, 100, 200, 100, 500],
