@@ -54,6 +54,17 @@ const onActivate = event => {
             )
         );
 };
+
 self.addEventListener("install", onInstall);
 self.addEventListener("fetch", onFetch);
 self.addEventListener("activate", onActivate);
+
+self.addEventListener("notificationclose", event => {
+    console.log("notificationclose", event);
+});
+self.addEventListener("notificationclick", event => {
+    console.log("notificationclick", event);
+});
+self.addEventListener("push", event => {
+    console.log("push", event);
+});
