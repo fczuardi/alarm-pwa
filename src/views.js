@@ -25,6 +25,7 @@ const setupView: ChooView = (state, emit) => {
 };
 
 const alarmView: ChooView = (state, emit) => {
+    console.log({ config });
     let curlLine = "";
     if (!state.subscription) {
         state.registration.pushManager
@@ -55,7 +56,8 @@ const alarmView: ChooView = (state, emit) => {
     } else {
         console.log(state.subscription.endpoint);
         curlLine = `curl "${state.subscription
-            .endpoint}" --request POST --header "TTL: 60" --header "Content-Length: 0" --header "Authorization: key=${config.gcmServerKey}"`;
+            .endpoint}" --request POST --header "TTL: 60" --header "Content-Length: 0" --header "Authorization: key=${config
+            .app.gcmServerKey}"`;
     }
     return html`
 <div>

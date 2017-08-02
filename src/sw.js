@@ -1,5 +1,5 @@
 // @flow
-const CACHE_NAME = "v7";
+const CACHE_NAME = "v8";
 
 const urlsToCache = ["index.html", "vendors.js", "app.js", "sw.js"];
 

@@ -77,7 +77,7 @@ var _templateObject = _taggedTemplateLiteral(["\n<div>\n    <h2>Setup</h2>\n    
 function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 //      
-var config = require('./config');
+var config = require("./config");
 var html = require("choo/html");
 
 var setupView = function (state, emit) {
@@ -90,6 +90,7 @@ var setupView = function (state, emit) {
 };
 
 var alarmView = function (state, emit) {
+    console.log({ config: config });
     var curlLine = "";
     if (!state.subscription) {
         state.registration.pushManager.getSubscription().then(function (subscription) {
@@ -112,7 +113,7 @@ var alarmView = function (state, emit) {
         });
     } else {
         console.log(state.subscription.endpoint);
-        curlLine = "curl \"" + state.subscription.endpoint + "\" --request POST --header \"TTL: 60\" --header \"Content-Length: 0\" --header \"Authorization: key=" + config.gcmServerKey + "\"";
+        curlLine = "curl \"" + state.subscription.endpoint + "\" --request POST --header \"TTL: 60\" --header \"Content-Length: 0\" --header \"Authorization: key=" + config.app.gcmServerKey + "\"";
     }
     return html(_templateObject2, curlLine);
 };
