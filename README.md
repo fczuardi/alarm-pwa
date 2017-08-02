@@ -9,29 +9,34 @@
 npm install
 ```
 
-### 1. Development Webserver
-This project uses [budo][budo], to start it run:
+### 1. Edit Config file
 
 ```
-npm start
+vim config.toml
 ```
 
-### 2. HTTPS
-Some of the features in progressive web-apps requires SSL, to make things simple, we use [localtunnnel][localtunnel].
+#### 1.1 gcmSenderId
 
-```
-npm i -g localtunnel
-lt --port 9966
-```
+- https://console.firebase.google.com/?pli=1
+  - Add Project
+  - Settings > Cloud Messaging
+  - (copy Sender ID)
 
-If you are testing locally https is not a requirement for service works and using ```http://localhost:9966``` should be fine.
-
-### 3. Production Bundle
+### 2. Generate Production Bundle
 To generate a static page with the bundled dependencies under the ```docs``` subfolder (served by github pages) use:
 
 ```
 npm start bundle
 ```
+
+### 3. Development Webserver
+You can also test the app on a development local server ([budo][budo]) that auto generates the main app bundle on thee fly. To start it run:
+
+```
+npm start
+```
+
+Note that the service workers file (sw.js) wont auto-include dependencies, 
 
 ### 4. Other tasks
 
@@ -42,5 +47,4 @@ npm start help
 ```
 
 [budo]: https://github.com/mattdesl/budo
-[localtunnel]: https://localtunnel.me
 
