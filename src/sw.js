@@ -1,5 +1,5 @@
 // @flow
-const CACHE_NAME = "v10";
+const CACHE_NAME = "v11 ";
 
 const urlsToCache = ["index.html", "vendors.js", "app.js", "sw.js"];
 
@@ -56,7 +56,10 @@ self.addEventListener("notificationclose", event => {
 });
 self.addEventListener("notificationclick", event => {
     console.log("notificationclick", event);
-    clients.openWindow("https://fczuardi.github.io/alarm-pwa");
+    event.notification.close();
+    if (clients.openWindow) {
+        event.waitUntil(clients.openWindow(self.clickTarget));
+    }
 });
 
 self.addEventListener("push", event => {

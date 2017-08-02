@@ -1,6 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 //      
-var CACHE_NAME = "v10";
+var CACHE_NAME = "v11 ";
 
 var urlsToCache = ["index.html", "vendors.js", "app.js", "sw.js"];
 
@@ -47,7 +47,10 @@ self.addEventListener("notificationclose", function (event) {
 });
 self.addEventListener("notificationclick", function (event) {
     console.log("notificationclick", event);
-    clients.openWindow("https://fczuardi.github.io/alarm-pwa");
+    event.notification.close();
+    if (clients.openWindow) {
+        event.waitUntil(clients.openWindow(self.clickTarget));
+    }
 });
 
 self.addEventListener("push", function (event) {
