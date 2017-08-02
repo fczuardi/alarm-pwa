@@ -1,6 +1,7 @@
 // @flow
 const config = require("./config");
 const html = require("choo/html");
+const toUint8Array = require("./urlBase64ToUint8Array");
 
 type ChooView = (Object, Function) => any;
 
@@ -25,13 +26,11 @@ const setupView: ChooView = (state, emit) => {
 };
 
 const alarmView: ChooView = (state, emit) => {
-    console.log({ config });
-    let curlLine = "";
+    let webPushLine = "";
     if (!state.subscription) {
         state.registration.pushManager
             .getSubscription()
             .then(subscription => {
-                console.log({ subscription });
                 if (subscription) {
                     return subscription;
                 }
@@ -39,10 +38,14 @@ const alarmView: ChooView = (state, emit) => {
                     emit("log:error", "pushManager not there");
                     return Promise.reject();
                 }
+                emit("log:info", config.webPush.pubKey);
+                const publicKey = toUint8Array(config.webPush.pubKey);
                 const subscriptionPromise = state.registration.pushManager.subscribe(
-                    { userVisibleOnly: true }
+                    {
+                        userVisibleOnly: true,
+                        applicationServerKey: publicKey
+                    }
                 );
-                console.log({ subscriptionPromise });
                 return subscriptionPromise;
             })
             .then(subscription => {
@@ -54,18 +57,29 @@ const alarmView: ChooView = (state, emit) => {
             })
             .catch(err => emit("log:error", err.message));
     } else {
-        console.log(state.subscription.endpoint);
-        curlLine = `
-curl "${state.subscription.endpoint}" \
-  --request POST --header "TTL: 60" --header "Content-Length: 0" \
-  --header "Authorization: key=${config.app.gcmServerKey}"
-`;
+        const key = state.subscription.getKey("p256dh");
+        const auth = state.subscription.getKey("auth");
+        const encodedKey = btoa(
+            String.fromCharCode.apply(null, new Uint8Array(key))
+        );
+        const encodedAuth = btoa(
+            String.fromCharCode.apply(null, new Uint8Array(auth))
+        );
+        webPushLine = `
+web-push send-notification \\
+--payload "My payload" \\
+--endpoint "${state.subscription.endpoint}" \\
+--key "${encodedKey}" \\
+--auth "${encodedAuth}" \\
+--vapid-subject "${config.webPush.subject}" \\
+--vapid-pubkey "${config.webPush.pubKey}" \\
+--vapid-pvtkey `;
     }
     return html`
 <div>
     <h2>Alarm</h2>
     <p>Use the following curl line to sound the alarm</p>
-    <pre>${curlLine}</pre>
+    <pre>${webPushLine}</pre>
 </div>
 `;
 };

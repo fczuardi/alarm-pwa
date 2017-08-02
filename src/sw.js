@@ -1,5 +1,5 @@
 // @flow
-const CACHE_NAME = "v11 ";
+const CACHE_NAME = "v12";
 
 const urlsToCache = ["index.html", "vendors.js", "app.js", "sw.js"];
 
@@ -63,9 +63,15 @@ self.addEventListener("notificationclick", event => {
 });
 
 self.addEventListener("push", event => {
-    console.log("push", event);
+    console.log("push event");
+    let body = "";
+    if (event.data) {
+        body = event.data.text();
+    } else {
+        body = "Push message no payload";
+    }
     var options = {
-        body: "This notification was generated from a push!",
+        body,
         vibrate: [100, 50, 100],
         data: {
             dateOfArrival: Date.now(),

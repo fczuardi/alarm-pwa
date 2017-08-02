@@ -11,16 +11,18 @@ npm install
 
 ### 1. Edit Config file
 
+The config.toml file is where all setup is made, edit this file to fill
+in the blanks.
+
+#### 1.1 Web Push
+
+If you need to create a new pair of VAPID keys use the command:
+
 ```
-vim config.toml
+npm start generate:keys
 ```
 
-#### 1.1 gcmSenderId
-
-- https://console.firebase.google.com/?pli=1
-  - Add Project
-  - Settings > Cloud Messaging
-  - (copy Sender ID)
+The public one is shared between the clients and your push server.
 
 ### 2. Generate Production Bundle
 To generate a static page with the bundled dependencies under the ```docs``` subfolder (served by github pages) use:

@@ -32,6 +32,12 @@ module.exports = {
                 "budo --dir src --dir assets --force-default-index src/app.js -- " +
                 ["", ...transforms].join(" --")
         },
+        generate: {
+            keys: {
+                description: "Generate VAPID keys keypair and write it to the config file",
+                script: "web-push generate-vapid-keys"
+            }
+        },
         bundle: {
             app: {
                 description:

@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = { "app": { "name": "Your App's Long Name", "shortName": "Your App's Name", "themeColor": "#FFFFFF", "gcmSenderId": "948046944495", "gcmServerKey": "AAAA3LwAWO8:APA91bFbrMiIgIxqQze2jtnsCYimIQmlaI_XIy796lhZUtLGMqxqb-uTx_PbdK1srjU8lx0GIk8ZijeffYm16UzbBIzHA9emXLab14tJ8l6LzvmRd6chQ3vQ2wNQi5tD93Fs1Pi6vB_A" }, "vapid": { "pubKey": "BHpiuFYpHWVPkIlF9ZhBSZ8WM8mCoibpxySr5QnIaPlqmAt0PlTtvLjfT_rRjK0sOU3FSixV-pZBSFjQyDmxbuE" } };
+module.exports = { "app": { "name": "Your App's Long Name", "shortName": "Your App's Name", "themeColor": "#FFFFFF" }, "webPush": { "pubKey": "BL8EV9JBpANTUBuo2ybx5cEf2uJRPpuHLprnNl1SyFVyMBIhm8sRZWfSTA6ny20lTbQdJVChNe0aXQLvkTnWeIk", "privKey": "xrJ4unQQoTPYDGzdg8f0fqaFFYGoESBa4FngLGiaTR4", "subject": "mailto: fabricio@fabricio.org" } };
 },{}],2:[function(require,module,exports){
 var _templateObject = _taggedTemplateLiteral(["<div id=\"main\"></div>"], ["<div id=\"main\"></div>"]);
 
@@ -64,10 +64,25 @@ if (document.body) {
 } else {
     console.error("document.body is not here", document.body);
 }
-},{"./config":3,"./views":4,"choo":undefined,"choo-log":undefined,"choo/html":undefined}],3:[function(require,module,exports){
+},{"./config":3,"./views":5,"choo":undefined,"choo-log":undefined,"choo/html":undefined}],3:[function(require,module,exports){
 var config = require("../config.toml");
 module.exports = config;
 },{"../config.toml":1}],4:[function(require,module,exports){
+// from https://github.com/web-push-libs/web-push
+function urlBase64ToUint8Array(base64String) {
+    var padding = "=".repeat((4 - base64String.length % 4) % 4);
+    var base64 = (base64String + padding).replace(/\-/g, "+").replace(/_/g, "/");
+
+    var rawData = window.atob(base64);
+    var outputArray = new Uint8Array(rawData.length);
+
+    for (var i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+}
+module.exports = urlBase64ToUint8Array;
+},{}],5:[function(require,module,exports){
 var _templateObject = _taggedTemplateLiteral(["\n<div>\n    <h2>Setup</h2>\n    <p>Please allow notifications from this app.</p>\n    <button onclick=", " >\n        Continue\n    </button>\n</div>\n"], ["\n<div>\n    <h2>Setup</h2>\n    <p>Please allow notifications from this app.</p>\n    <button onclick=", " >\n        Continue\n    </button>\n</div>\n"]),
     _templateObject2 = _taggedTemplateLiteral(["\n<div>\n    <h2>Alarm</h2>\n    <p>Use the following curl line to sound the alarm</p>\n    <pre>", "</pre>\n</div>\n"], ["\n<div>\n    <h2>Alarm</h2>\n    <p>Use the following curl line to sound the alarm</p>\n    <pre>", "</pre>\n</div>\n"]),
     _templateObject3 = _taggedTemplateLiteral(["\n        <div>\n        Please change the notifications permissions and refresh this page.\n        </div>\n    "], ["\n        <div>\n        Please change the notifications permissions and refresh this page.\n        </div>\n    "]),
@@ -79,6 +94,7 @@ function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defi
 //      
 var config = require("./config");
 var html = require("choo/html");
+var toUint8Array = require('./urlBase64ToUint8Array');
 
 var setupView = function (state, emit) {
     var notificationPrompt = function () {
@@ -90,11 +106,9 @@ var setupView = function (state, emit) {
 };
 
 var alarmView = function (state, emit) {
-    console.log({ config: config });
-    var curlLine = "";
+    var webPushLine = "";
     if (!state.subscription) {
         state.registration.pushManager.getSubscription().then(function (subscription) {
-            console.log({ subscription: subscription });
             if (subscription) {
                 return subscription;
             }
@@ -102,8 +116,12 @@ var alarmView = function (state, emit) {
                 emit("log:error", "pushManager not there");
                 return Promise.reject();
             }
-            var subscriptionPromise = state.registration.pushManager.subscribe({ userVisibleOnly: true });
-            console.log({ subscriptionPromise: subscriptionPromise });
+            emit('log:info', config.webPush.pubKey);
+            var publicKey = toUint8Array(config.webPush.pubKey);
+            var subscriptionPromise = state.registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: publicKey
+            });
             return subscriptionPromise;
         }).then(function (subscription) {
             emit("log:info", "Got a susbscription " + JSON.stringify(subscription));
@@ -112,10 +130,13 @@ var alarmView = function (state, emit) {
             return emit("log:error", err.message);
         });
     } else {
-        console.log(state.subscription.endpoint);
-        curlLine = "\ncurl \"" + state.subscription.endpoint + "\"   --request POST --header \"TTL: 60\" --header \"Content-Length: 0\"   --header \"Authorization: key=" + config.app.gcmServerKey + "\"\n";
+        var key = state.subscription.getKey('p256dh');
+        var auth = state.subscription.getKey('auth');
+        var encodedKey = btoa(String.fromCharCode.apply(null, new Uint8Array(key)));
+        var encodedAuth = btoa(String.fromCharCode.apply(null, new Uint8Array(auth)));
+        webPushLine = "\nweb-push send-notification \\\n--payload \"My payload\" \\\n--endpoint \"" + state.subscription.endpoint + "\" \\\n--key \"" + encodedKey + "\" \\\n--auth \"" + encodedAuth + "\" \\\n--vapid-subject \"" + config.webPush.subject + "\" \\\n--vapid-pubkey \"" + config.webPush.pubKey + "\" \\\n--vapid-pvtkey ";
     }
-    return html(_templateObject2, curlLine);
+    return html(_templateObject2, webPushLine);
 };
 
 var blockedView = function (state, emit) {
@@ -143,4 +164,4 @@ module.exports = {
     blockedView: blockedView,
     mainView: mainView
 };
-},{"./config":3,"choo/html":undefined}]},{},[2]);
+},{"./config":3,"./urlBase64ToUint8Array":4,"choo/html":undefined}]},{},[2]);

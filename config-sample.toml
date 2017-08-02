@@ -2,6 +2,8 @@
 name = "Your App's Long Name"
 shortName = "Your App's Name"
 themeColor = "#FFFFFF"
-gcmSenderId = ""
-gcmServerKey =""
 
+# generated with web-push generate-vapid-keys
+[webPush]
+pubKey =""
+subject = "mailto: mail@example.com"
