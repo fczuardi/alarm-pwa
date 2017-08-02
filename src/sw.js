@@ -1,15 +1,7 @@
 // @flow
-// const config = require("../config.toml");
+const CACHE_NAME = "v5";
 
-const CACHE_NAME = "v4";
-
-const urlsToCache = [
-    // config.alarmSound,
-    "index.html",
-    "vendors.js",
-    "app.js",
-    "sw.js"
-];
+const urlsToCache = ["index.html", "vendors.js", "app.js", "sw.js"];
 
 const onInstall = event => {
     console.log({ event });
