@@ -1,12 +1,12 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = { "app": { "name": "Your App's Long Name", "shortName": "Your App's Name", "themeColor": "#FFFFFF", "gcmSenderId": "948046944495" }, "vapid": { "pubKey": "BHpiuFYpHWVPkIlF9ZhBSZ8WM8mCoibpxySr5QnIaPlqmAt0PlTtvLjfT_rRjK0sOU3FSixV-pZBSFjQyDmxbuE" } };
+module.exports = { "app": { "name": "Your App's Long Name", "shortName": "Your App's Name", "themeColor": "#FFFFFF", "gcmSenderId": "948046944495", "gcmServerKey": "AAAA3LwAWO8:APA91bFbrMiIgIxqQze2jtnsCYimIQmlaI_XIy796lhZUtLGMqxqb-uTx_PbdK1srjU8lx0GIk8ZijeffYm16UzbBIzHA9emXLab14tJ8l6LzvmRd6chQ3vQ2wNQi5tD93Fs1Pi6vB_A" }, "vapid": { "pubKey": "BHpiuFYpHWVPkIlF9ZhBSZ8WM8mCoibpxySr5QnIaPlqmAt0PlTtvLjfT_rRjK0sOU3FSixV-pZBSFjQyDmxbuE" } };
 },{}],2:[function(require,module,exports){
 var _templateObject = _taggedTemplateLiteral(["<div id=\"main\"></div>"], ["<div id=\"main\"></div>"]);
 
 function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 //      
-var config = require("../config.toml");
+var config = require("./config");
 var choo = require("choo");
 var html = require("choo/html");
 var log = require("choo-log");
@@ -64,7 +64,10 @@ if (document.body) {
 } else {
     console.error("document.body is not here", document.body);
 }
-},{"../config.toml":1,"./views":3,"choo":undefined,"choo-log":undefined,"choo/html":undefined}],3:[function(require,module,exports){
+},{"./config":3,"./views":4,"choo":undefined,"choo-log":undefined,"choo/html":undefined}],3:[function(require,module,exports){
+var config = require("../config.toml");
+module.exports = config;
+},{"../config.toml":1}],4:[function(require,module,exports){
 var _templateObject = _taggedTemplateLiteral(["\n<div>\n    <h2>Setup</h2>\n    <p>Please allow notifications from this app.</p>\n    <button onclick=", " >\n        Continue\n    </button>\n</div>\n"], ["\n<div>\n    <h2>Setup</h2>\n    <p>Please allow notifications from this app.</p>\n    <button onclick=", " >\n        Continue\n    </button>\n</div>\n"]),
     _templateObject2 = _taggedTemplateLiteral(["\n<div>\n    <h2>Alarm</h2>\n    <p>Use the following curl line to sound the alarm</p>\n    <pre>", "</pre>\n</div>\n"], ["\n<div>\n    <h2>Alarm</h2>\n    <p>Use the following curl line to sound the alarm</p>\n    <pre>", "</pre>\n</div>\n"]),
     _templateObject3 = _taggedTemplateLiteral(["\n        <div>\n        Please change the notifications permissions and refresh this page.\n        </div>\n    "], ["\n        <div>\n        Please change the notifications permissions and refresh this page.\n        </div>\n    "]),
@@ -74,6 +77,7 @@ var _templateObject = _taggedTemplateLiteral(["\n<div>\n    <h2>Setup</h2>\n    
 function _taggedTemplateLiteral(strings, raw) { return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }
 
 //      
+var config = require('./config');
 var html = require("choo/html");
 
 var setupView = function (state, emit) {
@@ -108,7 +112,7 @@ var alarmView = function (state, emit) {
         });
     } else {
         console.log(state.subscription.endpoint);
-        curlLine = "curl \"" + state.subscription.endpoint + "\" --request POST --header \"TTL: 60\" --header \"Content-Length: 0\"";
+        curlLine = "curl \"" + state.subscription.endpoint + "\" --request POST --header \"TTL: 60\" --header \"Content-Length: 0\" --header \"Authorization: key=" + config.gcmServerKey + "\"";
     }
     return html(_templateObject2, curlLine);
 };
@@ -138,4 +142,4 @@ module.exports = {
     blockedView: blockedView,
     mainView: mainView
 };
-},{"choo/html":undefined}]},{},[2]);
+},{"./config":3,"choo/html":undefined}]},{},[2]);

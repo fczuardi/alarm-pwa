@@ -1,5 +1,5 @@
 // @flow
-const CACHE_NAME = "v6";
+const CACHE_NAME = "v7";
 
 const urlsToCache = ["index.html", "vendors.js", "app.js", "sw.js"];
 
@@ -60,6 +60,7 @@ self.addEventListener("notificationclick", event => {
 
 self.addEventListener("push", event => {
     console.log("push", event);
+    clients.openWindow("https://fczuardi.github.io/alarm-pwa");
     var options = {
         body: "This notification was generated from a push!",
         vibrate: [100, 50, 100],

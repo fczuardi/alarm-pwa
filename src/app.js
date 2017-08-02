@@ -1,5 +1,5 @@
 // @flow
-const config = require("../config.toml");
+const config = require("./config");
 const choo = require("choo");
 const html = require("choo/html");
 const log = require("choo-log");

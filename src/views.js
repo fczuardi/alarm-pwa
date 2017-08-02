@@ -1,4 +1,5 @@
 // @flow
+const config = require("./config");
 const html = require("choo/html");
 
 type ChooView = (Object, Function) => any;
@@ -54,7 +55,7 @@ const alarmView: ChooView = (state, emit) => {
     } else {
         console.log(state.subscription.endpoint);
         curlLine = `curl "${state.subscription
-            .endpoint}" --request POST --header "TTL: 60" --header "Content-Length: 0"`;
+            .endpoint}" --request POST --header "TTL: 60" --header "Content-Length: 0" --header "Authorization: key=${config.gcmServerKey}"`;
     }
     return html`
 <div>
